@@ -2,7 +2,7 @@ export interface AuthUser {
   _id: string
   name: string
   email: string
-  role: string
+  role: "admin" | "user"
   active: boolean
   createdAt: string
   updatedAt: string
@@ -18,9 +18,17 @@ export interface LoginResponse {
   token: string
 }
 
+export interface AuthError {
+  message: string
+  code?: string
+  status?: number
+}
+
+export type AuthStatus = "authenticated" | "unauthenticated" | "loading"
+
 export interface AuthState {
   user: AuthUser | null
   isAuthenticated: boolean
   isLoading: boolean
-  error: string | null
+  error: AuthError | null
 } 

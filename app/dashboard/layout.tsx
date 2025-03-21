@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useAuth } from "@/lib/auth/auth-provider"
+import { useAuth, useRequireAuth } from "@/lib/auth/auth-provider"
 import { DashboardSidebar } from "@/components/dashboard/sidebar"
 import { DashboardHeader } from "@/components/dashboard/header"
 import { Toaster } from "@/components/ui/toaster"
@@ -17,6 +17,9 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
+  // This ensures the entire dashboard section is protected
+  useRequireAuth()
+
   const { isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
 
