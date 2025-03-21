@@ -31,7 +31,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (error) {
-      setErrors(prev => ({ ...prev, form: error.message }))
+      setErrors(prev => ({ ...prev, form: error }))
     }
   }, [error])
 

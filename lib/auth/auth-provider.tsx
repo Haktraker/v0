@@ -111,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setState(prev => ({
         ...prev,
         isLoading: false,
-        error,
+        error: error.message,
         isAuthenticated: false,
       }))
       setStatus("unauthenticated")
@@ -138,7 +138,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const setError = (error: AuthError | null) => {
-    setState(prev => ({ ...prev, error }))
+    setState(prev => ({ ...prev, error: error?.message || null }))
   }
 
   return (
