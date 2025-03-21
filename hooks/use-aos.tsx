@@ -1,28 +1,57 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect } from 'react'
+import AOS from 'aos'
+import { animations } from '@/components/aos-provider'
 
-export function useAOS() {
-  const [mounted, setMounted] = useState(false)
+type AnimationKeys = keyof typeof animations
+type AnimationConfig = typeof animations[AnimationKeys]
 
+interface UseAOSOptions {
+  animation: AnimationKeys
+  customConfig?: Partial<AnimationConfig>
+}
+
+export function useAOS({ animation, customConfig = {} }: UseAOSOptions) {
   useEffect(() => {
-    setMounted(true)
+    AOS.refresh()
   }, [])
 
-  const getAOSProps = (animation: string, delay = 0) => {
-    if (!mounted) return {}
-
-    const props: Record<string, string> = {
-      "data-aos": animation,
-    }
-
-    if (delay > 0) {
-      props["data-aos-delay"] = delay.toString()
-    }
-
-    return props
+  const baseConfig = animations[animation]
+  return {
+    ...baseConfig,
+    ...customConfig,
   }
-
-  return { mounted, getAOSProps }
 }
+
+// Helper function to combine multiple animations
+export function combineAnimations(...configs: AnimationConfig[]) {
+  return configs.reduce((acc, config) => ({ ...acc, ...config }), {})
+}
+
+// Example usage:
+/*
+import { useAOS, combineAnimations } from '@/hooks/use-aos'
+
+function MyComponent() {
+  const fadeUpAnimation = useAOS({ animation: 'fadeUp' })
+  // or with custom config
+  const customAnimation = useAOS({
+    animation: 'fadeUp',
+    customConfig: { 'data-aos-delay': '300' }
+  })
+  
+  // Combine multiple animations
+  const combinedAnimation = combineAnimations(
+    animations.fadeUp,
+    animations.zoomIn
+  )
+
+  return (
+    <div {...fadeUpAnimation}>
+      Animated content
+    </div>
+  )
+}
+*/
 

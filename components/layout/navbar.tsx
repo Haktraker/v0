@@ -18,6 +18,19 @@ import {
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu"
 
+const publicNavItems = [
+  { name: 'Products', href: '/products' },
+  { name: 'Solutions', href: '/solutions' },
+  { name: 'Pricing', href: '/pricing' },
+  { name: 'Company', href: '/company' },
+]
+
+const privateNavItems = [
+  { name: 'Dashboard', href: '/dashboard' },
+  { name: 'Reports', href: '/dashboard/reports' },
+  { name: 'Settings', href: '/dashboard/settings' },
+]
+
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -40,13 +53,11 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const navItems = [
-    { name: "Company", href: "/company" },
-    { name: "Solutions", href: "/solutions" },
-    { name: "Products", href: "/products" },
-    { name: "Partners", href: "/partners" },
-    { name: "Pricing", href: "/pricing" },
-  ]
+  const handleLogout = async () => {
+    await logout()
+  }
+
+  const isActive = (path: string) => pathname === path
 
   // Avoid hydration mismatch by not rendering theme-specific elements until mounted
   const renderThemeChanger = () => {
@@ -101,17 +112,29 @@ export function Navbar() {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`text-sm font-medium transition-colors hover:text-purple ${
-                    pathname.startsWith(item.href) ? "text-purple" : "text-foreground/80 dark:text-white-85"
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {isAuthenticated
+                ? privateNavItems.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`text-sm font-medium transition-colors hover:text-purple ${
+                        isActive(item.href) ? "text-purple" : "text-foreground/80 dark:text-white-85"
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  ))
+                : publicNavItems.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`text-sm font-medium transition-colors hover:text-purple ${
+                        isActive(item.href) ? "text-purple" : "text-foreground/80 dark:text-white-85"
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
             </div>
 
             {/* Theme Toggle & Auth Buttons */}
@@ -146,7 +169,7 @@ export function Navbar() {
                         <Link href="/dashboard/settings">Settings</Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={logout} className="text-purple-secondary">
+                      <DropdownMenuItem onClick={handleLogout} className="text-purple-secondary">
                         <LogOut className="h-4 w-4 mr-2" />
                         Logout
                       </DropdownMenuItem>
@@ -194,20 +217,35 @@ export function Navbar() {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white dark:bg-dark-card border-t border-purple-10 dark:border-purple-30">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
-                  pathname.startsWith(item.href)
-                    ? "text-purple bg-purple-bg-5 dark:bg-purple-bg-10"
-                    : "text-foreground/80 dark:text-white-85 hover:bg-purple-bg-5 dark:hover:bg-purple-bg-10 hover:text-foreground dark:hover:text-white"
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {item.name}
-              </Link>
-            ))}
+            {isAuthenticated
+              ? privateNavItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`block px-3 py-2 rounded-md text-base font-medium ${
+                      isActive(item.href)
+                        ? "text-purple bg-purple-bg-5 dark:bg-purple-bg-10"
+                        : "text-foreground/80 dark:text-white-85 hover:bg-purple-bg-5 dark:hover:bg-purple-bg-10 hover:text-foreground dark:hover:text-white"
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))
+              : publicNavItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`block px-3 py-2 rounded-md text-base font-medium ${
+                      isActive(item.href)
+                        ? "text-purple bg-purple-bg-5 dark:bg-purple-bg-10"
+                        : "text-foreground/80 dark:text-white-85 hover:bg-purple-bg-5 dark:hover:bg-purple-bg-10 hover:text-foreground dark:hover:text-white"
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
 
             {isAuthenticated ? (
               <>
@@ -221,7 +259,7 @@ export function Navbar() {
                 <button
                   className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-purple-secondary hover:bg-purple-bg-5 dark:hover:bg-purple-bg-10"
                   onClick={() => {
-                    logout()
+                    handleLogout()
                     setIsMobileMenuOpen(false)
                   }}
                 >
