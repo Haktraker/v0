@@ -19,6 +19,9 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  UserCog,
+  FileInput,
+  Table,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -29,7 +32,7 @@ import {
 } from "@/components/ui/tooltip"
 import { animations } from "@/components/aos-provider"
 
-const sidebarItems = [
+const mainNavItems = [
   {
     title: "Dashboard",
     href: "/dashboard",
@@ -75,6 +78,22 @@ const sidebarItems = [
     href: "/dashboard/monitoring",
     icon: Building2,
   },
+]
+
+const adminNavItems = [
+  {
+    title: "Data Management",
+    href: "/dashboard/admin/data",
+    icon: FileInput,
+  },
+  {
+    title: "Data Review",
+    href: "/dashboard/admin/review",
+    icon: Table,
+  },
+]
+
+const bottomNavItems = [
   {
     title: "Support",
     href: "/dashboard/support",
@@ -85,11 +104,18 @@ const sidebarItems = [
     href: "/dashboard/settings",
     icon: Settings,
   },
+  {
+    title: "Admin",
+    href: "/dashboard/admin",
+    icon: UserCog,
+  },
 ]
 
 export function DashboardSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const pathname = usePathname()
+
+  const isAdminRoute = pathname.startsWith("/dashboard/admin")
 
   return (
     <TooltipProvider>
@@ -133,35 +159,114 @@ export function DashboardSidebar() {
 
         {/* Navigation Items */}
         <div className="flex-1 overflow-y-auto py-4 px-3">
-          <nav className="space-y-1">
-            {sidebarItems.map((item, index) => {
-              const isActive = pathname === item.href
-              return (
-                <Tooltip key={item.href}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
-                        "transition-all duration-200 ease-in-out",
-                        isActive
-                          ? "bg-purple-500 text-white shadow-md"
-                          : "text-muted-foreground hover:bg-purple-100/50 dark:hover:bg-purple-900/20",
-                        isCollapsed && "justify-center"
-                      )}
-                    >
-                      <item.icon className="h-5 w-5 flex-shrink-0" />
-                      {!isCollapsed && <span>{item.title}</span>}
-                    </Link>
-                  </TooltipTrigger>
-                  {isCollapsed && (
-                    <TooltipContent side="right">
-                      {item.title}
-                    </TooltipContent>
+          <nav className="space-y-6">
+            {/* Main Navigation */}
+            <div className="space-y-1">
+              {mainNavItems.map((item) => {
+                const isActive = pathname === item.href
+                return (
+                  <Tooltip key={item.href}>
+                    <TooltipTrigger asChild>
+                      <Link
+                        href={item.href}
+                        className={cn(
+                          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                          "transition-all duration-200 ease-in-out",
+                          isActive
+                            ? "bg-purple-500 text-white shadow-md"
+                            : "text-muted-foreground hover:bg-purple-100/50 dark:hover:bg-purple-900/20",
+                          isCollapsed && "justify-center"
+                        )}
+                      >
+                        <item.icon className="h-5 w-5 flex-shrink-0" />
+                        {!isCollapsed && <span>{item.title}</span>}
+                      </Link>
+                    </TooltipTrigger>
+                    {isCollapsed && (
+                      <TooltipContent side="right">{item.title}</TooltipContent>
+                    )}
+                  </Tooltip>
+                )
+              })}
+            </div>
+
+            {/* Admin Navigation */}
+            {isAdminRoute && (
+              <div className="space-y-1">
+                <div
+                  className={cn(
+                    "mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground",
+                    isCollapsed && "text-center"
                   )}
-                </Tooltip>
-              )
-            })}
+                >
+                  {!isCollapsed && "Admin"}
+                </div>
+                {adminNavItems.map((item) => {
+                  const isActive = pathname === item.href
+                  return (
+                    <Tooltip key={item.href}>
+                      <TooltipTrigger asChild>
+                        <Link
+                          href={item.href}
+                          className={cn(
+                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                            "transition-all duration-200 ease-in-out",
+                            isActive
+                              ? "bg-purple-500 text-white shadow-md"
+                              : "text-muted-foreground hover:bg-purple-100/50 dark:hover:bg-purple-900/20",
+                            isCollapsed && "justify-center"
+                          )}
+                        >
+                          <item.icon className="h-5 w-5 flex-shrink-0" />
+                          {!isCollapsed && <span>{item.title}</span>}
+                        </Link>
+                      </TooltipTrigger>
+                      {isCollapsed && (
+                        <TooltipContent side="right">{item.title}</TooltipContent>
+                      )}
+                    </Tooltip>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Bottom Navigation */}
+            <div className="space-y-1">
+              <div
+                className={cn(
+                  "mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground",
+                  isCollapsed && "text-center"
+                )}
+              >
+                {!isCollapsed && "System"}
+              </div>
+              {bottomNavItems.map((item) => {
+                const isActive = pathname === item.href
+                return (
+                  <Tooltip key={item.href}>
+                    <TooltipTrigger asChild>
+                      <Link
+                        href={item.href}
+                        className={cn(
+                          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                          "transition-all duration-200 ease-in-out",
+                          isActive
+                            ? "bg-purple-500 text-white shadow-md"
+                            : "text-muted-foreground hover:bg-purple-100/50 dark:hover:bg-purple-900/20",
+                          isCollapsed && "justify-center"
+                        )}
+                      >
+                        <item.icon className="h-5 w-5 flex-shrink-0" />
+                        {!isCollapsed && <span>{item.title}</span>}
+                      </Link>
+                    </TooltipTrigger>
+                    {isCollapsed && (
+                      <TooltipContent side="right">{item.title}</TooltipContent>
+                    )}
+                  </Tooltip>
+                )
+              })}
+            </div>
           </nav>
         </div>
 
@@ -185,9 +290,7 @@ export function DashboardSidebar() {
               </button>
             </TooltipTrigger>
             {isCollapsed && (
-              <TooltipContent side="right">
-                Logout
-              </TooltipContent>
+              <TooltipContent side="right">Logout</TooltipContent>
             )}
           </Tooltip>
         </div>
