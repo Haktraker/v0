@@ -27,6 +27,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { animations } from "@/components/aos-provider"
 
 const sidebarItems = [
   {
@@ -91,59 +92,70 @@ export function DashboardSidebar() {
   const pathname = usePathname()
 
   return (
-    <TooltipProvider delayDuration={0}>
-      <div
+    <TooltipProvider>
+      <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex h-screen flex-col border-r border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300",
-          isCollapsed ? "w-16" : "w-64"
+          "flex h-screen flex-col border-r border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
+          isCollapsed ? "w-20" : "w-64",
+          "transition-all duration-300 ease-in-out"
         )}
       >
-        <div className="flex h-16 items-center border-b border-border/50 px-4">
-          <Link href="/" className="flex items-center gap-2 overflow-hidden">
-            <Shield className="h-6 w-6 text-purple-500 flex-shrink-0" />
+        {/* Sidebar Header */}
+        <div className="flex h-16 items-center justify-between border-b border-border/50 px-4">
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <Shield className="h-6 w-6 text-purple-500" />
             <span
               className={cn(
-                "font-bold text-xl bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent transition-all duration-300",
-                isCollapsed ? "w-32" : "w-64"
+                "font-bold text-xl bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent",
+                isCollapsed ? "hidden" : "block",
+                "transition-all duration-300"
               )}
             >
               HakTrak
             </span>
           </Link>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn(
-              "ml-auto h-8 w-8",
-              isCollapsed && "rotate-180"
-            )}
-            onClick={() => setIsCollapsed(!isCollapsed)}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className={cn("h-8 w-8", isCollapsed && "rotate-180")}
+                onClick={() => setIsCollapsed(!isCollapsed)}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              {isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            </TooltipContent>
+          </Tooltip>
         </div>
+
+        {/* Navigation Items */}
         <div className="flex-1 overflow-y-auto py-4 px-3">
           <nav className="space-y-1">
-            {sidebarItems.map((item) => {
+            {sidebarItems.map((item, index) => {
               const isActive = pathname === item.href
               return (
-                <Tooltip key={item.href} delayDuration={0}>
+                <Tooltip key={item.href}>
                   <TooltipTrigger asChild>
                     <Link
                       href={item.href}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
+                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
+                        "transition-all duration-200 ease-in-out",
                         isActive
                           ? "bg-purple-500 text-white shadow-md"
-                          : "text-muted-foreground hover:bg-purple-100/50 dark:hover:bg-purple-900/20"
+                          : "text-muted-foreground hover:bg-purple-100/50 dark:hover:bg-purple-900/20",
+                        isCollapsed && "justify-center"
                       )}
                     >
-                      <item.icon className="h-4 w-4 flex-shrink-0" />
+                      <item.icon className="h-5 w-5 flex-shrink-0" />
                       {!isCollapsed && <span>{item.title}</span>}
                     </Link>
                   </TooltipTrigger>
                   {isCollapsed && (
-                    <TooltipContent side="right" className="border-border/50">
+                    <TooltipContent side="right">
                       {item.title}
                     </TooltipContent>
                   )}
@@ -152,30 +164,34 @@ export function DashboardSidebar() {
             })}
           </nav>
         </div>
+
+        {/* Logout Button */}
         <div className="border-t border-border/50 p-4">
-          <Tooltip delayDuration={0}>
+          <Tooltip>
             <TooltipTrigger asChild>
               <button
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-purple-100/50 dark:hover:bg-purple-900/20",
+                  "flex w-full items-center gap-3 rounded-lg px-3 py-2",
+                  "text-sm font-medium text-muted-foreground",
+                  "transition-colors hover:bg-purple-100/50 dark:hover:bg-purple-900/20",
                   isCollapsed && "justify-center"
                 )}
                 onClick={() => {
                   // Handle logout
                 }}
               >
-                <LogOut className="h-4 w-4 flex-shrink-0" />
+                <LogOut className="h-5 w-5 flex-shrink-0" />
                 {!isCollapsed && "Logout"}
               </button>
             </TooltipTrigger>
             {isCollapsed && (
-              <TooltipContent side="right" className="border-border/50">
+              <TooltipContent side="right">
                 Logout
               </TooltipContent>
             )}
           </Tooltip>
         </div>
-      </div>
+      </aside>
     </TooltipProvider>
   )
 }

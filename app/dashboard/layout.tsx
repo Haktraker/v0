@@ -25,13 +25,16 @@ export default function DashboardLayout({
       disableTransitionOnChange={false}
     >
       <ThemeInitializer />
-      <div className="min-h-screen bg-background">
+      <div className="relative flex min-h-screen bg-background">
+        {/* Sidebar */}
         <DashboardSidebar />
-        <main className="lg:pl-16 min-h-screen transition-[padding] duration-300">
-          <div className="container mx-auto p-4 lg:p-8">
+        
+        {/* Main Content */}
+        <div className="flex-1">
+          <main className="p-4 lg:p-8">
             {children}
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
       <Toaster />
     </ThemeProvider>
