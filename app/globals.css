@@ -6,65 +6,71 @@
   :root {
     /* Light mode */
     --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
+    --foreground: 240 10% 3.9%;
+
+    /* Purple theme for light mode */
+    --primary: 271 81% 56%;
+    --primary-foreground: 0 0% 100%;
+    --primary-muted: 271 81% 95%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card-foreground: 240 10% 3.9%;
+    --card-muted: 271 81% 97%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
-
-    --primary: 271 67% 53%;
-    --primary-foreground: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
 
     --secondary: 271 67% 46%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 271 67% 95%;
-    --muted-foreground: 0 0% 45%;
-
-    --accent: 187 92% 43%;
+    --accent: 271 67% 53%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    --muted: 271 67% 95%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    --border: 0 0% 0% / 0;
-    --input: 0 0% 90%;
-    --ring: 271 67% 53%;
+    --border: 271 67% 90%;
+    --input: 271 67% 90%;
+    --ring: 271 81% 56%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
     --radius: 0.5rem;
   }
 
   .dark {
     /* Dark mode - using exact colors from Dark Atlas */
-    --background: 240 29% 8%; /* rgb(15, 15, 27) */
-    --foreground: 0 0% 100%; /* rgb(255, 255, 255) */
+    --background: 240 29% 8%;
+    --foreground: 0 0% 100%;
 
-    --card: 240 26% 12%; /* rgb(23, 23, 39) */
+    /* Purple theme for dark mode */
+    --primary: 271 81% 56%;
+    --primary-foreground: 0 0% 100%;
+    --primary-muted: 271 81% 15%;
+
+    --card: 240 26% 12%;
     --card-foreground: 0 0% 100%;
+    --card-muted: 271 81% 10%;
 
     --popover: 240 26% 12%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 271 67% 53%; /* rgb(138, 44, 226) */
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 271 66% 46%; /* rgb(120, 40, 195) */
+    --secondary: 271 67% 46%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 26% 12%; /* rgb(23, 23, 39) */
-    --muted-foreground: 0 0% 45%; /* rgba(255, 255, 255, 0.45) */
+    --muted: 271 67% 15%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --accent: 187 92% 43%; /* rgb(6, 182, 212) */
+    --accent: 271 67% 53%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 100%;
+    --border: 271 67% 20%;
+    --input: 271 67% 20%;
+    --ring: 271 81% 56%;
 
-    --border: 0 0% 0% / 0;
-    --input: 240 26% 12%; /* rgb(23, 23, 39) */
-    --ring: 271 67% 53%; /* rgb(138, 44, 226) */
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
   }
 }
 
@@ -75,6 +81,23 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Theme transition styles */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Remove transition for elements that shouldn't animate */
+.no-transition {
+  transition: none !important;
+}
+
+/* Optimize animations */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
   }
 }
 
@@ -362,5 +385,18 @@ body,
 }
 .dark .bg-cyber-darker {
   background-color: rgb(10, 10, 18);
+}
+
+/* Dashboard specific styles */
+.dashboard-container {
+  @apply bg-gradient-to-br from-purple-100 via-background to-background dark:from-purple-900/20;
+}
+
+.dashboard-card {
+  @apply bg-card border border-border/50 shadow-lg hover:shadow-xl transition-all duration-200;
+}
+
+.dashboard-accent {
+  @apply bg-accent text-accent-foreground;
 }
 

@@ -1,6 +1,14 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts"
 
 interface SourceData {
   name: string
@@ -9,82 +17,41 @@ interface SourceData {
 
 interface SourcesBarChartProps {
   data: SourceData[]
-  height?: number
 }
 
-export function SourcesBarChart({ data, height = 200 }: SourcesBarChartProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-
-  useEffect(() => {
-    if (!canvasRef.current) return
-
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
-
-    // Set canvas dimensions
-    const dpr = window.devicePixelRatio || 1
-    const parentWidth = canvas.parentElement?.clientWidth || 300
-    canvas.width = parentWidth * dpr
-    canvas.height = height * dpr
-    canvas.style.width = `${parentWidth}px`
-    canvas.style.height = `${height}px`
-    ctx.scale(dpr, dpr)
-
-    // Clear canvas
-    ctx.clearRect(0, 0, parentWidth, height)
-
-    // Calculate dimensions
-    const maxValue = Math.max(...data.map((item) => item.value))
-    const barCount = data.length
-    const barWidth = (parentWidth - 60) / (barCount * 2)
-    const barSpacing = barWidth
-
-    // Draw grid lines and labels
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.1)"
-    ctx.fillStyle = "rgba(255, 255, 255, 0.5)"
-    ctx.textAlign = "right"
-    ctx.font = "10px sans-serif"
-
-    const gridLines = 5
-    for (let i = 0; i <= gridLines; i++) {
-      const y = height - 30 - (i * (height - 60)) / gridLines
-      ctx.beginPath()
-      ctx.moveTo(40, y)
-      ctx.lineTo(parentWidth - 10, y)
-      ctx.stroke()
-
-      const value = Math.round((i * maxValue) / gridLines)
-      ctx.fillText(value.toString(), 35, y + 4)
-    }
-
-    // Draw bars
-    data.forEach((item, index) => {
-      const x = 50 + index * (barWidth + barSpacing)
-      const barHeight = (item.value / maxValue) * (height - 60)
-      const y = height - 30 - barHeight
-
-      // Create gradient
-      const gradient = ctx.createLinearGradient(0, y, 0, height - 30)
-      gradient.addColorStop(0, "#06B6D4") // Cyan at top
-      gradient.addColorStop(1, "rgba(6, 182, 212, 0.5)") // Transparent cyan at bottom
-
-      // Draw bar
-      ctx.fillStyle = gradient
-      ctx.beginPath()
-      ctx.rect(x, y, barWidth, barHeight)
-      ctx.fill()
-
-      // Draw source label
-      ctx.fillStyle = "rgba(255, 255, 255, 0.7)"
-      ctx.textAlign = "center"
-      ctx.fillText(`Source ${index + 1}`, x + barWidth / 2, height - 10)
-    })
-  }, [data, height])
-
+export function SourcesBarChart({ data }: SourcesBarChartProps) {
   return (
-    <div className="w-full">
-      <canvas ref={canvasRef} width="100%" height={height} />
+    <div className="h-[300px] w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#333" />
+          <XAxis
+            dataKey="name"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: "#666", fontSize: 12 }}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: "#666", fontSize: 12 }}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "rgba(23, 23, 39, 0.9)",
+              border: "none",
+              borderRadius: "4px",
+              color: "#fff",
+            }}
+          />
+          <Bar
+            dataKey="value"
+            fill="#8A2CE2"
+            radius={[4, 4, 0, 0]}
+            maxBarSize={40}
+          />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   )
 }

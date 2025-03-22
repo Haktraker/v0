@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss"
+import { fontFamily } from "tailwindcss/defaultTheme"
+
 const config = {
   darkMode: ["class"],
   content: [
@@ -27,6 +29,7 @@ const config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          muted: "hsl(var(--primary-muted))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -51,6 +54,7 @@ const config = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+          muted: "hsl(var(--card-muted))",
         },
         // Dark Atlas exact colors
         dark: {
@@ -68,6 +72,17 @@ const config = {
           "bg-20": "rgba(138, 44, 226, 0.2)",
           "bg-30": "rgba(138, 44, 226, 0.3)",
           "text-85": "rgba(138, 44, 226, 0.85)",
+          50: "#f8f5ff",
+          100: "#eee5ff",
+          200: "#deccff",
+          300: "#c4a3ff",
+          400: "#aa77ff",
+          500: "#8a2ce2", // Our primary purple
+          600: "#7823b6",
+          700: "#621b8d",
+          800: "#4f1873",
+          900: "#33195c",
+          950: "#1f0f3b",
         },
         white: {
           DEFAULT: "rgb(255, 255, 255)",
@@ -95,6 +110,9 @@ const config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       keyframes: {
         "accordion-down": {

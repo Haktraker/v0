@@ -1,27 +1,34 @@
 "use client"
 
 import { useEffect } from "react"
-import { useTheme } from "@/components/theme-provider"
+import { useTheme as useNextTheme } from "next-themes"
 
 export function useThemePersistence() {
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme, systemTheme, resolvedTheme } = useNextTheme()
   const storageKey = "haktrak-dashboard-theme"
 
-  // Load theme from localStorage on initial mount
+  // Initialize theme from localStorage only once on mount
   useEffect(() => {
     const savedTheme = localStorage.getItem(storageKey)
-    if (savedTheme && ["light", "dark", "system"].includes(savedTheme)) {
-      setTheme(savedTheme as "light" | "dark" | "system")
+    if (savedTheme && savedTheme !== theme) {
+      setTheme(savedTheme)
     }
-  }, [])
+  }, []) // Empty dependency array since we only want this to run once on mount
 
-  // Save theme to localStorage whenever it changes
+  // Save theme changes to localStorage, but only when theme actually changes
   useEffect(() => {
-    if (theme) {
+    if (theme && theme !== localStorage.getItem(storageKey)) {
       localStorage.setItem(storageKey, theme)
     }
   }, [theme])
 
-  return { theme, setTheme }
+  return {
+    theme,
+    setTheme,
+    systemTheme,
+    resolvedTheme,
+    isDark: resolvedTheme === "dark",
+    isLight: resolvedTheme === "light"
+  }
 }
 

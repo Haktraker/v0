@@ -1,115 +1,120 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Eye, RefreshCw, Shield } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Clock } from "@/components/dashboard/clock"
-import { SecurityScoreGaugeRecharts } from "@/components/dashboard/security-score-gauge-recharts"
+import { SecurityScoreGauge } from "@/components/dashboard/security-score-gauge"
 import { CompromisedEmployees } from "@/components/dashboard/compromised-employees"
-import { SourcesBarChartRecharts } from "@/components/dashboard/sources-bar-chart-recharts"
-import { EmployeesDonutChartRecharts } from "@/components/dashboard/employees-donut-chart-recharts"
-import { MetricsChartRecharts } from "@/components/dashboard/metrics-chart-recharts"
-import {
-  DashboardService,
-  type CompromisedEmployee,
-  type SourceData,
-  type EmployeeGroup,
-  type MetricData,
-} from "@/lib/data/dashboard-service"
-import { toast } from "sonner"
-import { useThemePersistence } from "@/hooks/use-theme-persistence"
-import { useRequireAuth } from '@/lib/auth/auth-provider'
+import { SourcesBarChart } from "@/components/dashboard/sources-bar-chart"
+import { Button } from "@/components/ui/button"
+import { RefreshCw } from "lucide-react"
+import { ModeToggle } from "@/components/mode-toggle"
+
+// Mock data
+const mockCompromisedEmployees = [
+  { email: "employee1@gmail.com", score: 250 },
+  { email: "employee2@gmail.com", score: 200 },
+  { email: "employee3@gmail.com", score: 150 },
+  { email: "employee4@gmail.com", score: 100 },
+  { email: "employee5@gmail.com", score: 50 },
+]
+
+const mockSourcesData = [
+  { name: "Source 1", value: 75 },
+  { name: "Source 2", value: 45 },
+  { name: "Source 3", value: 25 },
+  { name: "Source 4", value: 65 },
+  { name: "Source 5", value: 35 },
+]
+
+const mockMetrics = {
+  threats: 1000,
+  customers: 240,
+  passwords: 240,
+  emails: 234,
+  devices: 234,
+}
 
 export default function DashboardPage() {
-  const { theme } = useThemePersistence()
-  const { status, user } = useRequireAuth()
-
-  const [lastUpdated, setLastUpdated] = useState(new Date())
-  const [isLoading, setIsLoading] = useState(true)
-
-  const [securityScore, setSecurityScore] = useState(0)
-  const [compromisedEmployees, setCompromisedEmployees] = useState<CompromisedEmployee[]>([])
-  const [sourcesData, setSourcesData] = useState<SourceData[]>([])
-  const [employeesData, setEmployeesData] = useState<EmployeeGroup[]>([])
-  const [metricsData, setMetricsData] = useState<MetricData[]>([])
-
-  const fetchDashboardData = async () => {
-    setIsLoading(true)
-    try {
-      const [score, employees, sources, empData, metrics] = await Promise.all([
-        DashboardService.getSecurityScore(),
-        DashboardService.getCompromisedEmployees(),
-        DashboardService.getSourcesData(),
-        DashboardService.getEmployeesData(),
-        DashboardService.getMetricsData(),
-      ])
-
-      setSecurityScore(score)
-      setCompromisedEmployees(employees)
-      setSourcesData(sources)
-      setEmployeesData(empData)
-      setMetricsData(metrics)
-
-      setLastUpdated(new Date())
-
-      toast.success("Dashboard data refreshed")
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error)
-      toast.error("Failed to refresh dashboard data")
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchDashboardData()
-  }, [])
-
-  const handleRefresh = () => {
-    fetchDashboardData()
-  }
-
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-cyber-dark">
-        <div className="animate-pulse">
-          <Shield className="h-12 w-12 text-cyber-primary" />
-        </div>
-      </div>
-    )
-  }
+  const [securityScore, setSecurityScore] = useState(94)
 
   return (
-    <div className="min-h-screen bg-cyber-dark p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-cyber-dark/80 border border-cyber-gray/20 backdrop-blur-sm rounded-lg p-6">
-          <h1 className="text-3xl font-bold text-white mb-6">Welcome, {user?.name}</h1>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Dashboard Content */}
-            <div className="bg-cyber-dark/50 border border-cyber-gray/30 rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-cyber-primary mb-4">Profile Overview</h2>
-              <div className="space-y-3">
-                <p className="text-gray-400">
-                  <span className="text-gray-500">Email:</span> {user?.email}
-                </p>
-                <p className="text-gray-400">
-                  <span className="text-gray-500">Role:</span>{' '}
-                  <span className="capitalize">{user?.role}</span>
-                </p>
-                <p className="text-gray-400">
-                  <span className="text-gray-500">Status:</span>{' '}
-                  <span className="text-green-500">Active</span>
-                </p>
-              </div>
-            </div>
-
-            {/* Add more dashboard widgets here */}
-          </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent">
+            Analytics Dashboard
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Monitor your security metrics and employee activity
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+          <ModeToggle />
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={() => {
+              // Handle refresh
+            }}
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh Data
+          </Button>
         </div>
       </div>
+
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+        {/* Security Score */}
+        <Card className="bg-card/50 backdrop-blur-sm border-purple-200/50 dark:border-purple-900/50">
+          <CardHeader>
+            <CardTitle>Organization Risk Score</CardTitle>
+          </CardHeader>
+          <CardContent className="flex justify-center">
+            <SecurityScoreGauge score={securityScore} />
+          </CardContent>
+        </Card>
+
+        {/* Compromised Employees */}
+        <Card className="bg-card/50 backdrop-blur-sm border-purple-200/50 dark:border-purple-900/50">
+          <CardHeader>
+            <CardTitle>Most Compromised Employees</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CompromisedEmployees employees={mockCompromisedEmployees} />
+          </CardContent>
+        </Card>
+
+        {/* Top Sources */}
+        <Card className="bg-card/50 backdrop-blur-sm border-purple-200/50 dark:border-purple-900/50">
+          <CardHeader>
+            <CardTitle>Top Sources</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <SourcesBarChart data={mockSourcesData} />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Metrics */}
+      <Card className="bg-card/50 backdrop-blur-sm border-purple-200/50 dark:border-purple-900/50">
+        <CardHeader>
+          <CardTitle>Recent Findings</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {Object.entries(mockMetrics).map(([key, value]) => (
+              <div
+                key={key}
+                className="flex flex-col items-center justify-center rounded-lg bg-purple-50/50 dark:bg-purple-900/20 p-4 text-center"
+              >
+                <span className="text-2xl font-bold text-purple-500">{value}</span>
+                <span className="text-sm text-muted-foreground capitalize">{key}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

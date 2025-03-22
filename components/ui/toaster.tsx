@@ -1,28 +1,36 @@
 "use client"
 
-import type React from "react"
+import {
+  Toast,
+  ToastClose,
+  ToastDescription,
+  ToastProvider,
+  ToastTitle,
+  ToastViewport,
+} from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
 
-import { Toaster as Sonner } from "sonner"
+export function Toaster() {
+  const { toasts } = useToast()
 
-type ToasterProps = React.ComponentProps<typeof Sonner>
-
-const Toaster = ({ ...props }: ToasterProps) => {
   return (
-    <Sonner
-      className="toaster group"
-      toastOptions={{
-        classNames: {
-          toast:
-            "group toast group-[.toaster]:bg-cyber-dark group-[.toaster]:text-foreground group-[.toaster]:border-cyber-gray group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-muted-foreground",
-          actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
-          cancelButton: "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
-        },
-      }}
-      {...props}
-    />
+    <ToastProvider>
+      {toasts.map(function ({ id, title, description, action, ...props }) {
+        return (
+          <Toast key={id} {...props} className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full dark:border-neutral-800 dark:bg-neutral-950 light:bg-white light:border-neutral-200">
+            <div className="grid gap-1">
+              {title && <ToastTitle className="text-foreground">{title}</ToastTitle>}
+              {description && (
+                <ToastDescription className="text-muted-foreground">{description}</ToastDescription>
+              )}
+            </div>
+            {action}
+            <ToastClose className="text-foreground/50 hover:text-foreground" />
+          </Toast>
+        )
+      })}
+      <ToastViewport />
+    </ToastProvider>
   )
 }
-
-export { Toaster }
 

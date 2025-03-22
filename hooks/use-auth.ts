@@ -1,1 +1,0 @@
-export { useAuth, useRequireAuth } from '@/lib/auth/auth-provider' 
